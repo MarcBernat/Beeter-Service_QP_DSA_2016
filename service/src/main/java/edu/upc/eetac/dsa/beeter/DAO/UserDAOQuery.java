@@ -3,7 +3,7 @@ package edu.upc.eetac.dsa.beeter.DAO;
 /**
  * Created by marc on 2/03/16.
  */
-public class UserDAOQuery {
+public interface UserDAOQuery {
     public final static String UUID = "select REPLACE(UUID(),'-','')";
     public final static String CREATE_USER = "insert into users (id, loginid, password, email, fullname) values (UNHEX(?), ?, UNHEX(MD5(?)), ?, ?);";
     public final static String UPDATE_USER = "update users set email=?, fullname=? where id=unhex(?)";
