@@ -1,6 +1,5 @@
 package edu.upc.eetac.dsa.grouptalk.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.glassfish.jersey.linking.InjectLinks;
 
 import javax.ws.rs.core.Link;
@@ -8,16 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by marc on 25/02/16.
- * Entity para la tabla de relación Temas-Stings (Respuestas)
+ * Created by marc on 3/03/16.
+ * Entity para la tabla de relación Grupo-Temas (Temas)
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class StingCollection {
+public class ThemeCollection {
     @InjectLinks({})
     private List<Link> links;
     private long newestTimestamp;
     private long oldestTimestamp;
-    private List<Sting> stings = new ArrayList<>();
+    private List<Theme> themes = new ArrayList<>();
 
     public List<Link> getLinks() {
         return links;
@@ -43,11 +41,11 @@ public class StingCollection {
         this.oldestTimestamp = oldestTimestamp;
     }
 
-    public List<Sting> getStings() {
-        return stings;
+    public List<Theme> getThemes() {
+        return themes;
     }
 
-    public void setStings(List<Sting> stings) {
-        this.stings = stings;
+    public void setThemes(List<Theme> themes) {
+        this.themes = themes;
     }
 }
