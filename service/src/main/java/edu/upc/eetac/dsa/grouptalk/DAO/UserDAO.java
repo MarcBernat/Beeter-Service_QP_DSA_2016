@@ -19,4 +19,8 @@ public interface UserDAO {
         public boolean deleteUser(String id) throws SQLException;
 
         public boolean checkPassword(String id, String password) throws SQLException;
+
+        public boolean signUpGroup(String id, String idgroup) throws SQLException;
+
+        public boolean signDownGroup(String id, String idgroup) throws SQLException;
 }

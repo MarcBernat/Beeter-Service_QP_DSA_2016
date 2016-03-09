@@ -209,4 +209,51 @@ public class UserDAOImpl implements UserDAO {
             if (connection != null) connection.close();
         }
     }
+
+    //Inscribimos al grupo
+    @Override
+    public boolean signUpGroup(String id, String idgroup) throws SQLException
+    {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(UserDAOQuery.IN_USER_GROUP);
+            stmt.setString(1, id);
+            stmt.setString(2, idgroup);
+
+            int rows = stmt.executeUpdate();
+            return (rows == 1);
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+    }
+
+    //Quitamos del grupo
+    @Override
+    public boolean signDownGroup(String id, String idgroup) throws SQLException
+    {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(UserDAOQuery.OUT_USER_GROUP);
+            stmt.setString(1, id);
+            stmt.setString(2, idgroup);
+
+            int rows = stmt.executeUpdate();
+            return (rows == 1);
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+    }
+
 }
