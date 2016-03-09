@@ -51,6 +51,13 @@ CREATE TABLE theme (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE group_theme_rel (
+    groupid BINARY(16) NOT NULL,
+    themeid BINARY(16) NOT NULL,
+    FOREIGN KEY (groupid) REFERENCES groups(id) on delete cascade,
+    FOREIGN KEY (themeid) REFERENCES theme(id) on delete cascade,
+);
+
 CREATE TABLE sting (
     id BINARY(16) NOT NULL,
     userid BINARY(16) NOT NULL,

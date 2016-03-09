@@ -104,7 +104,7 @@ public class GroupDAOImpl implements GroupDAO {
         }
         return GroupCollection;
     }
-
+    @Override
     public boolean isInGroup (String userid, String groupid) throws SQLException{
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -142,4 +142,6 @@ public class GroupDAOImpl implements GroupDAO {
             }
         }
     }
+
+
 }

@@ -42,6 +42,14 @@ public class Theme {
         this.id = id;
     }
 
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
     public String getContent() {
         return content;
     }
