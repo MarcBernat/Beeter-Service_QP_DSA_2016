@@ -123,7 +123,7 @@ public class GroupDAOImpl implements GroupDAO {
 
             while (rs.next())
             {
-                group = rs.getString(1);
+                group = rs.getString("groupid");
                 if(groupid == group)
                 {
                     in = true;

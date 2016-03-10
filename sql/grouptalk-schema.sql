@@ -69,9 +69,9 @@ CREATE TABLE sting (
 );
 
 CREATE TABLE theme_sting_rel (
-    userid BINARY(16) NOT NULL,
+    themeid BINARY(16) NOT NULL,
     stingid BINARY(16) NOT NULL,
-    FOREIGN KEY (userid) REFERENCES users(id) on delete cascade,
+    FOREIGN KEY (themeid) REFERENCES theme(id) on delete cascade,
     FOREIGN KEY (stingid) REFERENCES sting(id) on delete cascade,
 );
 

@@ -14,4 +14,6 @@ public interface ThemeDAO {
     public ThemeCollection getThemesByGroup(String groupid, String userid) throws SQLException, UserNotInscribedException;
     public Theme createTheme(String subject, String userid, String groupid) throws SQLException, ThemeAlreadyExistsException, UserNotInscribedException;
     public Theme getThemeByID(String id) throws SQLException;
+    public boolean deleteThemeandStingsbyUser(String userid, String themeid) throws SQLException, UserNoGenuineUpdateStingException;
+    public boolean deleteThemeandStingsbyAdmin(String userid, String themeid) throws SQLException;
 }

@@ -1,5 +1,6 @@
 package edu.upc.eetac.dsa.grouptalk.DAO;
 
+import edu.upc.eetac.dsa.grouptalk.entity.Sting;
 import edu.upc.eetac.dsa.grouptalk.entity.Theme;
 import edu.upc.eetac.dsa.grouptalk.entity.ThemeCollection;
 
@@ -119,6 +120,11 @@ public class ThemeDAOImpl implements ThemeDAO {
             stmt.setString(3, subject);
             stmt.executeUpdate();
 
+            stmt = connection.prepareStatement(ThemeDAOQuery.CREATE_REL_THEME_GROUP);
+            stmt.setString(1, groupid);
+            stmt.setString(2, id);
+            stmt.executeUpdate();
+
         } catch (SQLException e) {
             throw e;
         } finally {
@@ -160,5 +166,106 @@ public class ThemeDAOImpl implements ThemeDAO {
             if (connection != null) connection.close();
         }
         return theme;
+    }
+
+    @Override
+    public boolean deleteThemeandStingsbyUser(String userid, String themeid) throws SQLException, UserNoGenuineUpdateStingException
+    {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+
+        try{
+            connection = Database.getConnection();
+            //Check si el creador del tema es el usuario
+            stmt = connection.prepareStatement(ThemeDAOQuery.CHECK_USER_OF_THEME);
+            stmt.setString(1, themeid);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next())
+            {
+                if(userid != rs.getString("userid"))
+                {
+                    throw new UserNoGenuineUpdateStingException();
+                }
+            }
+            //Borrar los mensajes relacionados del tema
+            //Borrar las relaciones de tema_mensaje
+            stmt = connection.prepareStatement(ThemeDAOQuery.GET_STINGS_BY_THEME);
+            stmt.setString(1, themeid);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String id = rs.getString("id");
+                //Borrar los mensajes relacionados del tema
+                stmt = connection.prepareStatement(ThemeDAOQuery.DELETE_STINGS);
+                stmt.setString(1, id);
+                stmt.executeUpdate();
+                //Borrar las relaciones de tema_mensaje
+                stmt = connection.prepareStatement(ThemeDAOQuery.DELETE_STINGS_REL_THEME);
+                stmt.setString(1, themeid);
+                stmt.setString(2, id);
+                stmt.executeUpdate();
+            }
+            else
+            return false;
+
+            //Borrar el tema
+            stmt = connection.prepareStatement(ThemeDAOQuery.DELETE_STINGS);
+            stmt.setString(1, themeid);
+            stmt.executeUpdate();
+
+            return true;
+        }catch (SQLException e){
+            return false;
+        }finally{
+        if (stmt != null) stmt.close();
+        if (connection != null) connection.close();
+        }
+
+    }
+
+    @Override
+    public boolean deleteThemeandStingsbyAdmin(String userid, String themeid) throws SQLException
+    {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+
+        try{
+            connection = Database.getConnection();
+            //Borrar los mensajes relacionados del tema
+            //Borrar las relaciones de tema_mensaje
+            stmt = connection.prepareStatement(ThemeDAOQuery.GET_STINGS_BY_THEME);
+            stmt.setString(1, themeid);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String id = rs.getString("id");
+                //Borrar los mensajes relacionados del tema
+                stmt = connection.prepareStatement(ThemeDAOQuery.DELETE_STINGS);
+                stmt.setString(1, id);
+                stmt.executeUpdate();
+                //Borrar las relaciones de tema_mensaje
+                stmt = connection.prepareStatement(ThemeDAOQuery.DELETE_STINGS_REL_THEME);
+                stmt.setString(1, themeid);
+                stmt.setString(2, id);
+                stmt.executeUpdate();
+            }
+            else
+                return false;
+
+            //Borrar el tema
+            stmt = connection.prepareStatement(ThemeDAOQuery.DELETE_STINGS);
+            stmt.setString(1, themeid);
+            stmt.executeUpdate();
+
+            return true;
+        }catch (SQLException e){
+            return false;
+        }finally{
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+
     }
 }

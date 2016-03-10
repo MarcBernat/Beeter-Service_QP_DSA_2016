@@ -13,14 +13,14 @@ import java.sql.SQLException;
  */
 public class StingDAOImpl implements StingDAO {
     @Override
-    public Sting createSting(String userid, String subject, String content) throws SQLException {
+    public Sting createSting(String userid, String content, String themeid) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
         try {
             connection = Database.getConnection();
 
-            stmt = connection.prepareStatement(UserDAOQuery.UUID);
+            stmt = connection.prepareStatement(StingDAOQuery.UUID);
             ResultSet rs = stmt.executeQuery();
             if (rs.next())
                 id = rs.getString(1);
@@ -30,9 +30,15 @@ public class StingDAOImpl implements StingDAO {
             stmt = connection.prepareStatement(StingDAOQuery.CREATE_STING);
             stmt.setString(1, id);
             stmt.setString(2, userid);
-            stmt.setString(3, subject);
-            stmt.setString(4, content);
+            stmt.setString(3, content);
             stmt.executeUpdate();
+
+            stmt = connection.prepareStatement(StingDAOQuery.CREATE_REL_STING_THEME);
+            stmt.setString(1, themeid);
+            stmt.setString(2, id);
+            stmt.executeUpdate();
+
+
         } catch (SQLException e) {
             throw e;
         } finally {
@@ -62,8 +68,6 @@ public class StingDAOImpl implements StingDAO {
                 sting = new Sting();
                 sting.setId(rs.getString("id"));
                 sting.setUserid(rs.getString("userid"));
-                sting.setCreator(rs.getString("fullname"));
-                sting.setSubject(rs.getString("subject"));
                 sting.setContent(rs.getString("content"));
                 sting.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
                 sting.setLastModified(rs.getTimestamp("last_modified").getTime());
@@ -78,14 +82,15 @@ public class StingDAOImpl implements StingDAO {
     }
 
     @Override
-    public StingCollection getStings() throws SQLException {
+    public StingCollection getStings(String themeid) throws SQLException {
         StingCollection stingCollection = new StingCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
         try {
             connection = Database.getConnection();
-            stmt = connection.prepareStatement(StingDAOQuery.GET_STINGS);
+            stmt = connection.prepareStatement(StingDAOQuery.GET_STINGS_BY_THEME);
+            stmt.setString(1, themeid);
 
             ResultSet rs = stmt.executeQuery();
             boolean first = true;
@@ -93,7 +98,7 @@ public class StingDAOImpl implements StingDAO {
                 Sting sting = new Sting();
                 sting.setId(rs.getString("id"));
                 sting.setUserid(rs.getString("userid"));
-                sting.setSubject(rs.getString("subject"));
+                sting.setContent(rs.getString("content"));
                 sting.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
                 sting.setLastModified(rs.getTimestamp("last_modified").getTime());
                 if (first) {
@@ -113,8 +118,12 @@ public class StingDAOImpl implements StingDAO {
     }
 
     @Override
-    public Sting updateSting(String id, String subject, String content) throws SQLException {
+    public Sting updateSting(String id, String userid, String content) throws SQLException, UserNoGenuineUpdateStingException {
         Sting sting = null;
+
+        if (genuineUser(userid, id)){
+            throw new UserNoGenuineUpdateStingException();
+        }
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -122,9 +131,13 @@ public class StingDAOImpl implements StingDAO {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(StingDAOQuery.UPDATE_STING);
-            stmt.setString(1, subject);
-            stmt.setString(2, content);
-            stmt.setString(3, id);
+            stmt.setString(1, content);
+            stmt.setString(2, id);
+            //Sacamos el tiempo para ahcer la modificación
+            long time = System.currentTimeMillis();
+            java.sql.Timestamp timestamp = new java.sql.Timestamp(time);
+
+            stmt.setTimestamp(3, timestamp);
 
             int rows = stmt.executeUpdate();
             if (rows == 1)
@@ -137,6 +150,43 @@ public class StingDAOImpl implements StingDAO {
         }
 
         return sting;
+    }
+
+    @Override
+    public boolean genuineUser(String userid, String stingid) throws SQLException
+    {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        boolean in = false;
+        try {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(StingDAOQuery.CHECK_USER_IN_STING);
+            stmt.setString(1, userid);
+            ResultSet rs = stmt.executeQuery();
+            /**
+             * Sacamos el userid del mensaje para comparar si es el mismo que nos pasan
+             */
+
+            while (rs.next())
+            {
+                if(userid == rs.getString("userid"))
+                {
+                    in = true;
+                }
+            }
+
+            return in;
+
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
+        }
     }
 
     @Override
