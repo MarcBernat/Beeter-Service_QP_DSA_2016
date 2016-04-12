@@ -69,7 +69,7 @@ public class GroupResource {
 
         try {
             if (groupDAO.isInGroup(idusuario, idgrupo))
-                throw new  BadRequestException("Not in Group");
+                throw new  BadRequestException("In Group");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
