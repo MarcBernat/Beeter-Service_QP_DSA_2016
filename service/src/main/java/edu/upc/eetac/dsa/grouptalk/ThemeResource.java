@@ -92,7 +92,7 @@ public class ThemeResource {
         }
     }
 
-    @Path("/{idgrupo}/{idusuario}/")
+    @Path("/{idgrupo}/{idusuario}/admin")
     @DELETE
     public void deleteThemeAdmin(@PathParam("idgrupo") String idgrupo, @PathParam("idusuario") String idusuario) throws URISyntaxException {
         String userid = securityContext.getUserPrincipal().getName();

@@ -190,10 +190,13 @@ public class StingDAOImpl implements StingDAO {
     }
 
     @Override
-    public boolean deleteSting(String id) throws SQLException {
+    public boolean deleteSting(String id, String userid) throws SQLException, UserNoGenuineUpdateStingException {
         Connection connection = null;
         PreparedStatement stmt = null;
         try {
+            if (genuineUser(userid, id)){
+                throw new UserNoGenuineUpdateStingException();
+            }
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(StingDAOQuery.DELETE_STING);

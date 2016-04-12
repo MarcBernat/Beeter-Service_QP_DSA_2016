@@ -14,5 +14,5 @@ public interface StingDAO {
     public StingCollection getStings(String themeid) throws SQLException;
     public Sting updateSting(String id, String subject, String content) throws SQLException, UserNoGenuineUpdateStingException;
     public boolean genuineUser(String userid, String stingid) throws SQLException;
-    public boolean deleteSting(String id) throws SQLException;
+    public boolean deleteSting(String id, String userid) throws SQLException, UserNoGenuineUpdateStingException;
 }
