@@ -144,6 +144,7 @@ public class ThemeDAOImpl implements ThemeDAO {
         Theme theme = null;
         Connection connection = null;
         PreparedStatement stmt = null;
+
         try {
             connection = Database.getConnection();
 
